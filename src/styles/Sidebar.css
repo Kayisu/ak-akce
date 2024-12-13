@@ -45,9 +45,11 @@
     cursor: pointer;
     text-align: center;
     text-transform: uppercase;
+    font-size: smaller;
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 60%;
+    width: 25%;
+    margin-left: auto;
 }
 
 .back-button:hover {
