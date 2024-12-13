@@ -32,7 +32,7 @@ const Sidebar = ({ content }) => {
             </div>
             {/* Sidebar menü */}
             <div className={`sidebar ${isMenuOpen ? 'open' : ''}`}>
-                <div className="back-button" onClick={handleBack}>← geri dön</div>
+                <div className="back-button" onClick={handleBack}>⮜ geri dön</div>
                 {content}
             </div>
         </>

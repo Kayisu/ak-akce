@@ -42,7 +42,7 @@ const CategoryPage = () => {
 
     const sidebarContent = (
         <>
-            <h3>{category} Alt Kategorileri</h3>
+            <h3>{category}</h3>
             <ul>
                 {subcategories.map((subcategory) => (
                     <li key={subcategory.subcategory_id}>
