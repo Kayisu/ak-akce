@@ -8,6 +8,7 @@ import SignupPage from './SignupPage';
 import AccountPage from './AccountPage';
 import FavoritesPage from './FavoritesPage';
 import Header from './Header';
+import AttributePage from './AttributePage';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -81,6 +82,15 @@ const App = () => {
             <>
               <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
               <CategoryPage />
+            </>
+          }
+        />
+        <Route
+          path="/attribute/:attributeId"
+          element={
+            <>
+              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              <AttributePage />
             </>
           }
         />

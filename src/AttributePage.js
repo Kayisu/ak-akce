@@ -1,40 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Layout from './Layout';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Products.css';
-const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
-    const navigate = useNavigate();
+
+const AttributePage = () => {
+    const { attributeId } = useParams();
     const [products, setProducts] = useState([]);
+    const [attributeName, setAttributeName] = useState('');
+    const [orderbyClause, setOrderbyClause] = useState('popularity');
+    const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const handleCategoryClick = (category) => {
-        navigate(`/${category}`);
-    };
-
-    const sidebarContent = (
-        <>
-            <h3>Kategoriler</h3>
-            <ul>
-                {categories.map((category, index) => (
-                    <li
-                        key={index}
-                        onClick={() => handleCategoryClick(category)}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        {category}
-                    </li>
-                ))}
-            </ul>
-        </>
-    );
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/products');
+                const response = await axios.get(`http://localhost:5000/api/products/attribute/${attributeId}`, {
+                    params: { orderbyClause, sortOrder }
+                });
                 setProducts(response.data);
+                setAttributeName(response.data[0]?.attribute_name || '');
                 console.log('Ürünler:', response.data); // Ürün verisini kontrol edin
                 setLoading(false);
             } catch (error) {
@@ -43,20 +29,29 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
                 setLoading(false);
             }
         };
-    
         fetchProducts();
-    }, []);
+    }, [attributeName, attributeId, orderbyClause, sortOrder]);
+
+    const handleSortChange = (e) => {
+        const [orderby, order] = e.target.value.split(',');
+        setOrderbyClause(orderby);
+        setSortOrder(order);
+    };
 
     return (
-        <Layout
-            sidebarContent={sidebarContent}
-            isBackButtonVisible={false} // Geri Dön tuşu ana sayfada görünmez
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={setIsLoggedIn}
-        >
-            <div className="homepage">
-                <h1>Popüler Ürünler</h1>
-
+        <Layout>
+            <h1>{attributeName} Ürünleri</h1>
+            <div>
+                <label htmlFor="sort">Sırala:</label>
+                <select id="sort" onChange={handleSortChange}>
+                    <option value="popularity,DESC">Popüler Ürünler</option>
+                    <option value="name,ASC">İsme Göre (A-Z)</option>
+                    <option value="name,DESC">İsme Göre (Z-A)</option>
+                    <option value="price,ASC">Fiyata Göre (Artan)</option>
+                    <option value="price,DESC">Fiyata Göre (Azalan)</option>
+                    
+                </select>
+            </div>
                 {loading && <p>Yükleniyor...</p>}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -67,16 +62,15 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
                                 alt={product.product_name}
                                 style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
                             <h2>{product.product_name}</h2>
-                            <p>Fiyat: {product.lowest_price} TL</p>
+                            <p>Fiyat: {product.price} TL</p>
                             {/* <p>Satıcı: {product.seller_name}</p> */}
                             {/* <p>Popülerlik: {product.popularity_value}</p> */}
                             <p>Ortalama Puan: {product.average_rating || 'Henüz değerlendirme yok'}</p>
                         </div>
                     ))}
                 </div>
-            </div>
         </Layout>
     );
 };
 
-export default Homepage;
+export default AttributePage;

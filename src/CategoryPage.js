@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Layout from './Layout';
 import axios from 'axios';
 import './styles/CategoryPage.css'
+
 
 const CategoryPage = () => {
     const { category } = useParams(); // Kategori adını alıyoruz
     const [subcategories, setSubcategories] = useState([]);
     const [expandedSubcategory, setExpandedSubcategory] = useState(null); // Açık alt kategori
     const [attributes, setAttributes] = useState({}); // Her alt kategori için attribute'ları tutar
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSubcategories = async () => {
@@ -40,9 +42,17 @@ const CategoryPage = () => {
         setExpandedSubcategory(subcategoryId); // Yeni alt kategoriyi genişlet
     };
 
+    const handleAttributeClick = async (attributeId) => {
+        navigate(`/attribute/${attributeId}`);
+
+
+    }
+
+
+
     const sidebarContent = (
         <>
-            <h3>{category}</h3>
+            <h3>{category} Alt Kategorileri</h3>
             <ul>
                 {subcategories.map((subcategory) => (
                     <li key={subcategory.subcategory_id}>
@@ -55,7 +65,13 @@ const CategoryPage = () => {
                         {expandedSubcategory === subcategory.subcategory_id && (
                             <ul style={{ paddingLeft: '20px', color: '#555' }}>
                                 {attributes[subcategory.subcategory_id]?.map((attr) => (
-                                    <li key={attr.attribute_id}>{attr.attribute_name}</li>
+                                    <li key={attr.attribute_id}>
+                                        <div
+                                            onClick={() => handleAttributeClick(attr.attribute_id)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {attr.attribute_name}
+                                        </div></li>
                                 )) || <li>Yükleniyor...</li>}
                             </ul>
                         )}
