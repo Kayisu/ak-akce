@@ -9,10 +9,14 @@ import AccountPage from './AccountPage';
 import FavoritesPage from './FavoritesPage';
 import Header from './Header';
 import AttributePage from './AttributePage';
+import ProductPage from './ProductPage';
+import AdminHome from './AdminHome';
+import AdminPage from './AdminPage';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [categories, setCategories] = useState([]); // Kategoriler state'i
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -24,6 +28,18 @@ const App = () => {
       }
     };
     fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/users');
+        setUsers(response.data.map((item) => item.user));
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
   }, []);
 
   return (
@@ -77,7 +93,15 @@ const App = () => {
           }
         />
         <Route
-          path="/:category"
+          path="/admin"
+          element={<AdminPage />}
+        />
+
+        <Route path="/admin/home"
+          element={<AdminHome />}
+        />
+        <Route
+          path="category/:category_name"
           element={
             <>
               <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
@@ -86,14 +110,27 @@ const App = () => {
           }
         />
         <Route
-          path="/attribute/:attributeId"
+          path="/attribute/:attribute_id"
           element={
             <>
+
               <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
               <AttributePage />
             </>
           }
         />
+
+        <Route
+          path="/products/:productId"
+          element={
+            <>
+              <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              <ProductPage />
+            </>
+          }
+
+        />
+
       </Routes>
     </Router>
   );

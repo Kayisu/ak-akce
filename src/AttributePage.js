@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from './Layout';
 import axios from 'axios';
 import './styles/Products.css';
 
 const AttributePage = () => {
-    const { attributeId } = useParams();
+    const { attribute_id } = useParams();
     const [products, setProducts] = useState([]);
     const [attributeName, setAttributeName] = useState('');
     const [orderbyClause, setOrderbyClause] = useState('popularity');
     const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/products/attribute/${attributeId}`, {
+                const response = await axios.get(`http://localhost:5000/api/products/attribute/${attribute_id}`, {
                     params: { orderbyClause, sortOrder }
                 });
-                setProducts(response.data);
-                setAttributeName(response.data[0]?.attribute_name || '');
-                console.log('Ürünler:', response.data); // Ürün verisini kontrol edin
+                setProducts(response.data.products); // Ensure this points to the array of products
+                setAttributeName(response.data.attribute_name || '');
                 setLoading(false);
             } catch (error) {
                 console.error('Ürünler alınamadı:', error);
@@ -30,7 +30,7 @@ const AttributePage = () => {
             }
         };
         fetchProducts();
-    }, [attributeName, attributeId, orderbyClause, sortOrder]);
+    }, [attribute_id, orderbyClause, sortOrder]);
 
     const handleSortChange = (e) => {
         const [orderby, order] = e.target.value.split(',');
@@ -38,8 +38,16 @@ const AttributePage = () => {
         setSortOrder(order);
     };
 
+    const handleProductClick = (productId) => {
+        navigate(`/products/${productId}`); // Ürün detay sayfasına yönlendirme
+    };
+
     return (
-        <Layout>
+        <Layout
+            //sidebarContent={sidebarContent}
+            isBackButtonVisible={true} // Geri Dön tuşu görünür
+            backButtonPath="/" // Ana sayfaya yönlendirme
+        >
             <h1>{attributeName} Ürünleri</h1>
             <div>
                 <label htmlFor="sort">Sırala:</label>
@@ -49,26 +57,31 @@ const AttributePage = () => {
                     <option value="name,DESC">İsme Göre (Z-A)</option>
                     <option value="price,ASC">Fiyata Göre (Artan)</option>
                     <option value="price,DESC">Fiyata Göre (Azalan)</option>
-                    
+
                 </select>
             </div>
-                {loading && <p>Yükleniyor...</p>}
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+            {loading && <p>Yükleniyor...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
-                <div className="product-list">
-                    {products.map((product) => (
-                        <div className="product-card" key={product.product_id}>
-                            <img src={`${product.img_url}`}
-                                alt={product.product_name}
-                                style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
-                            <h2>{product.product_name}</h2>
-                            <p>Fiyat: {product.price} TL</p>
-                            {/* <p>Satıcı: {product.seller_name}</p> */}
-                            {/* <p>Popülerlik: {product.popularity_value}</p> */}
-                            <p>Ortalama Puan: {product.average_rating || 'Henüz değerlendirme yok'}</p>
-                        </div>
-                    ))}
-                </div>
+            <div className="product-list">
+                {products.map((product) => (
+                    <div
+                        className="product-card"
+                        key={product.product_id}
+                        onClick={() => handleProductClick(product.product_id)} // Tıklama işlevi
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <img
+                            src={`${product.img_url}`}
+                            alt={product.product_name}
+                            style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+                        />
+                        <h2>{product.product_name}</h2>
+                        <p>Fiyat: {product.price} TL</p>
+                        <p>Ortalama Puan: {product.average_rating || 'Henüz değerlendirme yok'}</p>
+                    </div>
+                ))}
+            </div>
         </Layout>
     );
 };
