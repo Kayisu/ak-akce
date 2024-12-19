@@ -49,6 +49,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
             if (response.ok) {
                 setError('');
                 setIsLoggedIn(true);
+                localStorage.setItem('user', JSON.stringify(data.user)); // Store user data
                 navigate('/');
             } else {
                 setError(data.message || 'Kullanıcı adı veya şifre yanlış.');
@@ -58,6 +59,8 @@ const LoginPage = ({ setIsLoggedIn }) => {
             setError('Sunucuyla bağlantı kurulamadı.');
         }
     };
+
+
 
     return (
         <div

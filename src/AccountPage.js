@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
+import { useNavigate } from 'react-router-dom';
+
 
 const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
     const [currentEmail, setCurrentEmail] = useState('');
     const [password, setPassword] = useState('');
     const [newEmail, setNewEmail] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem('user'));
@@ -12,8 +15,6 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
             setCurrentEmail(userInfo.email);
         }
     }, []);
-
-
 
     const handlePasswordUpdate = async () => {
         try {
@@ -67,6 +68,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
         }
     };
 
+
     const handleAccountDelete = async () => {
         const confirmDelete = window.confirm(
             'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!'
@@ -89,6 +91,7 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                 alert('Hesabınız başarıyla silindi.');
                 localStorage.removeItem('user');
                 setIsLoggedIn(false);
+                navigate('/');
             } else {
                 alert(`Hata: ${data.message}`);
             }
@@ -137,21 +140,6 @@ const AccountPage = ({ isLoggedIn, setIsLoggedIn }) => {
                     </div>
                 </div>
 
-                {/* Kullanıcı Adını Güncelleme Bölümü */}
-                <div style={styles.section}>
-                    <h3>Kullanıcı Adını Güncelle</h3>
-                    <div style={styles.inputContainer}>
-                        <input
-                            type="text"
-                            placeholder="Yeni Kullanıcı Adı"
-                            style={styles.input}
-                        />
-                        <button style={styles.button}>
-                            Güncelle
-                        </button>
-                    </div>
-                </div>
-
                 {/* Hesabı Silme Butonu */}
                 <button onClick={handleAccountDelete} style={styles.deleteButton}>
                     Hesabı Sil
@@ -195,4 +183,3 @@ const styles = {
 };
 
 export default AccountPage;
-
