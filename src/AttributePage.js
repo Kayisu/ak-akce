@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from './Layout';
 import axios from 'axios';
-import './styles/Products.css';
+import './styles/ProductCard.css';
 
 const AttributePage = () => {
     const { attribute_id } = useParams();
@@ -11,7 +11,7 @@ const AttributePage = () => {
     const [attributeName, setAttributeName] = useState('');
     const [subcategoryId, setSubcategoryId] = useState(null);
     const [subcategoryAttributes, setSubcategoryAttributes] = useState([]);
-    const [orderbyClause, setOrderbyClause] = useState('popularity');
+    const [orderByClause, setorderByClause] = useState('popularity');
     const [sortOrder, setSortOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -37,10 +37,12 @@ const AttributePage = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
+                console.log('Fetching products with params:', { orderByClause, sortOrder }); // Log the parameters
                 const response = await axios.get(`http://localhost:5000/api/products/attribute/${attribute_id}`, {
-                    params: { orderbyClause, sortOrder },
+                    params: { orderByClause, sortOrder },
                 });
-                setProducts(response.data.products);
+                console.log('API Response:', response.data); // Log the response
+                setProducts(response.data.products || []);
                 setLoading(false);
             } catch (error) {
                 console.error('Products could not be fetched:', error);
@@ -50,7 +52,7 @@ const AttributePage = () => {
         };
 
         fetchProducts();
-    }, [attribute_id, orderbyClause, sortOrder]);
+    }, [attribute_id, orderByClause, sortOrder]);
 
     useEffect(() => {
         const fetchSubcategoryAttributes = async () => {
@@ -78,13 +80,13 @@ const AttributePage = () => {
                 console.error('Attribute details could not be fetched:', error);
             }
         };
-    
+
         fetchAttributeDetails();
     }, [attribute_id]);
 
     const handleSortChange = (e) => {
         const [orderby, order] = e.target.value.split(',');
-        setOrderbyClause(orderby);
+        setorderByClause(orderby);
         setSortOrder(order);
     };
 
@@ -117,37 +119,39 @@ const AttributePage = () => {
             sidebarContent={sidebarContent}
             backButtonPath={`/category/${categoryName}`}
         >
-            <h1>{attributeName} Products</h1>
-            <div>
-                <label htmlFor="sort">Sort:</label>
-                <select id="sort" onChange={handleSortChange}>
-                    <option value="popularity,DESC">Popular Products</option>
-                    <option value="name,ASC">Name (A-Z)</option>
-                    <option value="name,DESC">Name (Z-A)</option>
-                    <option value="price,ASC">Price (Low to High)</option>
-                    <option value="price,DESC">Price (High to Low)</option>
-                </select>
-            </div>
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <div className="product-list">
-                {products.map((product) => (
-                    <div
-                        className="product-card"
-                        key={product.product_id}
-                        onClick={() => handleProductClick(product.product_id)}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <img
-                            src={`${product.img_url}`}
-                            alt={product.product_name}
-                            style={{ width: '200px', height: '200px', objectFit: 'cover' }}
-                        />
-                        <h2>{product.product_name}</h2>
-                        <p>Price: {product.price} TL</p>
-                        <p>Average Rating: {product.average_rating || 'No reviews yet'}</p>
-                    </div>
-                ))}
+            <div className='page'>
+                <h1>{attributeName} Ürünleri</h1>
+                <div className='dropdownmenu'>
+                    <label htmlFor="sort">Sort: </label>
+                    <select id="sort" onChange={handleSortChange}>
+                        <option value="popularity,DESC">Popüler Ürünler</option>
+                        <option value="name,ASC">İsim (A-Z)</option>
+                        <option value="name,DESC">İsim (Z-A)</option>
+                        <option value="price,ASC">Fiyat (Artan)</option>
+                        <option value="price,DESC">Fiyat (Azalan)</option>
+                    </select>
+                </div>
+                {loading && <p>Loading...</p>}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                <div className="product-list">
+                    {products.map((product) => (
+                        <div
+                            className="product-card"
+                            key={product.product_id}
+                            onClick={() => handleProductClick(product.product_id)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <img
+                                src={`${product.img_url}`}
+                                alt={product.product_name}
+                                style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+                            />
+                            <h2>{product.product_name}</h2>
+                            <p>Fiyat: {product.price} TL</p>
+                            <p>Ortalama Puan: {product.average_rating || 'No reviews yet'}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
         </Layout>
     );

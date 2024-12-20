@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Layout from './Layout';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './styles/Homepage.css';
+import './styles/ProductCard.css';
 
 const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
     const navigate = useNavigate();
@@ -78,7 +78,7 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
             isLoggedIn={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
         >
-            <div className="homepage">
+            <div className="page">
                 <h1>Popüler Ürünler</h1>
 
                 {loading && <p>Yükleniyor...</p>}
@@ -105,9 +105,9 @@ const Homepage = ({ categories, isLoggedIn, setIsLoggedIn }) => {
                 </div>
             </div>
             <div className="pagination">
-            <button onClick={() => setPage(page - 1)} disabled={page === 1}>Önceki</button>
+            <button className='button' onClick={() => setPage(page - 1)} disabled={page === 1}>Önceki</button>
             <span>Sayfa {page}</span>
-            <button onClick={() => setPage(page + 1)} disabled={products.length < 50}>Sonraki</button>
+            <button className='button' onClick={() => setPage(page + 1)} disabled={products.length < 50}>Sonraki</button>
         </div>
         </Layout>
     );

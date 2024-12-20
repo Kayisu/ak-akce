@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Products.css';
 
+
 const ProductPage = ({ isLoggedIn, setIsLoggedIn }) => {
     const { productId } = useParams(); // URL'den productId'yi alıyoruz
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ const ProductPage = ({ isLoggedIn, setIsLoggedIn }) => {
 
     return (
         <div className="product-page">
-            <button className="back-button" onClick={() => navigate(-1)}>
+            <button className="backbutton" onClick={() => navigate(-1)}>
                 &#11164; Geri
             </button>
             {product.map((product) => (

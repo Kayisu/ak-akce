@@ -111,6 +111,7 @@ const CategoryPage = () => {
         sidebarContent={sidebarContent}
         backButtonPath="/"
         >
+            <div className='page'>
             <h1>{category_name} Ürünleri</h1>
             <div className="product-list">
                 {products.map((product) => (
@@ -132,9 +133,10 @@ const CategoryPage = () => {
                 ))}
             </div>
             <div className="pagination">
-            <button onClick={() => setPage(page - 1)} disabled={page === 1}>Önceki</button>
+            <button className='button' onClick={() => setPage(page - 1)} disabled={page === 1}>Önceki</button>
             <span>Sayfa {page}</span>
-            <button onClick={() => setPage(page + 1)} disabled={products.length < 50}>Sonraki</button>
+            <button className='button' onClick={() => setPage(page + 1)} disabled={products.length < 50}>Sonraki</button>
+        </div>
         </div>
         </Layout>
 

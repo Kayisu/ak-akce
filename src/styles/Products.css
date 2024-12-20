@@ -3,7 +3,7 @@
     background-color: #f8f9fa;
 }
 
-.back-button {
+.backbutton {
     display: inline-block;
     margin-bottom: 20px;
     background-color: var(--secondary-color);
