@@ -7,6 +7,7 @@ import './styles/Products.css';
 const AttributePage = () => {
     const { attribute_id } = useParams();
     const [products, setProducts] = useState([]);
+    const [categoryName, setCategoryName] = useState('');
     const [attributeName, setAttributeName] = useState('');
     const [subcategoryId, setSubcategoryId] = useState(null);
     const [subcategoryAttributes, setSubcategoryAttributes] = useState([]);
@@ -17,20 +18,21 @@ const AttributePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAttributeDetails = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/api/attribute/${attribute_id}`);
-                const attributeData = response.data;
-                setAttributeName(attributeData.attribute_name || '');
-                setSubcategoryId(attributeData.subcategory_id);
-            } catch (error) {
-                console.error('Attribute details could not be fetched:', error);
-                setError('Attribute details could not be fetched. Please try again later.');
-            }
-        };
+        if (subcategoryId) {
+            const fetchCategoryName = async () => {
+                try {
+                    const response = await axios.get(`http://localhost:5000/api/subcategory/${subcategoryId}`);
+                    const subcategoryData = response.data;
+                    const categoryName = subcategoryData.category_name;
+                    setCategoryName(categoryName);
+                } catch (error) {
+                    console.error('Category name could not be fetched:', error);
+                }
+            };
 
-        fetchAttributeDetails();
-    }, [attribute_id]);
+            fetchCategoryName();
+        }
+    }, [subcategoryId]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -65,6 +67,21 @@ const AttributePage = () => {
         fetchSubcategoryAttributes();
     }, [subcategoryId]);
 
+    useEffect(() => {
+        const fetchAttributeDetails = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/attribute/${attribute_id}`);
+                const attributeData = response.data;
+                setAttributeName(attributeData.attribute_name);
+                setSubcategoryId(attributeData.subcategory_id);
+            } catch (error) {
+                console.error('Attribute details could not be fetched:', error);
+            }
+        };
+    
+        fetchAttributeDetails();
+    }, [attribute_id]);
+
     const handleSortChange = (e) => {
         const [orderby, order] = e.target.value.split(',');
         setOrderbyClause(orderby);
@@ -96,7 +113,10 @@ const AttributePage = () => {
     );
 
     return (
-        <Layout sidebarContent={sidebarContent}>
+        <Layout
+            sidebarContent={sidebarContent}
+            backButtonPath={`/category/${categoryName}`}
+        >
             <h1>{attributeName} Products</h1>
             <div>
                 <label htmlFor="sort">Sort:</label>

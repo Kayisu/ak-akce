@@ -15,7 +15,8 @@ const CategoryPage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [page, setPage] = useState(1);
+    
     useEffect(() => {
         const fetchSubcategories = async () => {
             try {
@@ -32,9 +33,9 @@ const CategoryPage = () => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/products/category/${category_name}`, {
+                    params: { page }
                 });
                 setProducts(response.data);
-                console.log('Ürünler:', response.data); // Ürün verisini kontrol edin
                 setLoading(false);
             } catch (error) {
                 console.error('Ürünler alınamadı:', error);
@@ -43,7 +44,7 @@ const CategoryPage = () => {
             }
         };
         fetchProducts();
-    }, []);
+    }, [category_name, page]);
 
     const handleSubcategoryClick = async (subcategoryId) => {
         if (expandedSubcategory === subcategoryId) {
@@ -107,9 +108,8 @@ const CategoryPage = () => {
 
     return (
         <Layout
-            sidebarContent={sidebarContent}
-            isBackButtonVisible={true} // Geri Dön tuşu görünür
-            backButtonPath="/" // Ana sayfaya yönlendirme
+        sidebarContent={sidebarContent}
+        backButtonPath="/"
         >
             <h1>{category_name} Ürünleri</h1>
             <div className="product-list">
@@ -131,6 +131,11 @@ const CategoryPage = () => {
                     </div>
                 ))}
             </div>
+            <div className="pagination">
+            <button onClick={() => setPage(page - 1)} disabled={page === 1}>Önceki</button>
+            <span>Sayfa {page}</span>
+            <button onClick={() => setPage(page + 1)} disabled={products.length < 50}>Sonraki</button>
+        </div>
         </Layout>
 
     );
