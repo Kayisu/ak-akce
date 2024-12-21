@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles/Products.css';
+import Reviews from './Reviews';
 
 
 const ProductPage = ({ isLoggedIn, setIsLoggedIn }) => {
@@ -45,7 +46,8 @@ const ProductPage = ({ isLoggedIn, setIsLoggedIn }) => {
                         <p>Fiyat: {product.lowest_price} TL</p>
                         <p>Ortalama Puan: {product.average_rating || 'Henüz değerlendirme yok'}</p>
                     </div>
-                ))}
+                ))} 
+                <Reviews productId={productId} />
         </div>
     );
 };
